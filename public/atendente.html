@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atendente — Painel de Senhas</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
+  <div class="nav-links">
+    <a href="/atendente" class="active">Atendente</a>
+    <a href="/display">Display</a>
+    <a href="/login">Login</a>
+  </div>
+</nav>
+
+<main>
+  <div class="card">
+    <h2>🖥️ Painel de Controle — Geração de Senhas</h2>
+
+    <div id="alert" class="alert"></div>
+
+    <div class="senha-numero atendente" id="senhaAtual">—</div>
+    <p class="senha-label">Senha gerada mais recentemente</p>
+
+    <button class="btn btn-primary" id="btnGerar" onclick="gerarNovaSenha()">
+      ➕ Gerar Nova Senha
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>📋 Histórico de Senhas Geradas</h2>
+    <ul class="historico-lista" id="historico">
+      <li style="background:none;border:none;color:var(--text-muted)">Nenhuma senha gerada ainda.</li>
+    </ul>
+  </div>
+</main>
+
+<script src="/js/atendente.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display — Painel de Senhas</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
+  <div class="nav-links">
+    <a href="/atendente">Atendente</a>
+    <a href="/display" class="active">Display</a>
+    <a href="/login">Login</a>
+  </div>
+</nav>
+
+<main>
+  <div class="card">
+    <h2>📺 Painel do Guichê — Chamada de Senhas</h2>
+
+    <span class="badge-online">Atualizando em tempo real</span>
+
+    <div class="senha-numero display" id="senhaAtual">—</div>
+    <p class="senha-label">Senha sendo atendida agora</p>
+  </div>
+
+  <div class="card">
+    <h2>📋 Últimas Senhas Chamadas</h2>
+    <ul class="historico-lista" id="historico">
+      <li style="background:none;border:none;color:var(--text-muted)">Aguardando chamadas...</li>
+    </ul>
+  </div>
+</main>
+
+<script src="/js/display.js"></script>
+</body>
+</html>
