@@ -3,6 +3,16 @@
 
 let ultimaSenha = null;
 
+async function carregarInstancia() {
+  try {
+    const res = await fetch('/api/fila/instancia');
+    const { instanceId, createdAt } = await res.json();
+    document.getElementById('instanceId').textContent = `#${instanceId} (criada às ${createdAt})`;
+  } catch {
+    document.getElementById('instanceId').textContent = 'indisponível';
+  }
+}
+
 async function atualizar() {
   try {
     const [resAtual, resHistorico] = await Promise.all([
@@ -32,7 +42,7 @@ async function atualizar() {
     // Historico
     const ul = document.getElementById('historico');
     if (historico.length === 0) {
-      ul.innerHTML = '<li style="background:none;border:none;color:var(--text-muted)">Aguardando chamadas...</li>';
+      ul.innerHTML = '<li style="background:none;border:none;color:var(--ink-soft)">Aguardando chamadas...</li>';
     } else {
       ul.innerHTML = [...historico].reverse()
         .map(s => `<li>🎫 ${s}</li>`)
@@ -45,5 +55,6 @@ async function atualizar() {
 }
 
 // Polling a cada 2 segundos
+carregarInstancia();
 atualizar();
 setInterval(atualizar, 2000);

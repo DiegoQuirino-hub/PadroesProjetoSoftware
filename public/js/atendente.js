@@ -6,8 +6,19 @@ async function carregarEstadoInicial() {
     const senha = await res.json();
     if (senha > 0) document.getElementById('senhaAtual').textContent = senha;
     await carregarHistorico();
+    await carregarInstancia();
   } catch {
     mostrarAlerta('Não foi possível conectar à API. Verifique se o servidor Java está rodando.', 'error');
+  }
+}
+
+async function carregarInstancia() {
+  try {
+    const res = await fetch('/api/fila/instancia');
+    const { instanceId, createdAt } = await res.json();
+    document.getElementById('instanceId').textContent = `#${instanceId} (criada às ${createdAt})`;
+  } catch {
+    document.getElementById('instanceId').textContent = 'indisponível';
   }
 }
 
@@ -39,7 +50,7 @@ async function carregarHistorico() {
   const ul = document.getElementById('historico');
 
   if (lista.length === 0) {
-    ul.innerHTML = '<li style="background:none;border:none;color:var(--text-muted)">Nenhuma senha gerada ainda.</li>';
+    ul.innerHTML = '<li style="background:none;border:none;color:var(--ink-soft)">Nenhuma senha gerada ainda.</li>';
     return;
   }
 

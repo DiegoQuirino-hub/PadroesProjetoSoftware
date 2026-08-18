@@ -1,5 +1,6 @@
 /* =============================================
-   PAINEL DE SENHAS — Estilos globais
+   PAINEL DE SENHAS — identidade visual "quiosque de senhas"
+   Papel de tíquete + display LED + painel de controle industrial.
    ============================================= */
 
 * {
@@ -9,66 +10,93 @@
 }
 
 :root {
-  --primary: #1a73e8;
-  --primary-dark: #1558b0;
-  --success: #2e7d32;
-  --success-light: #e8f5e9;
-  --danger: #c62828;
-  --danger-light: #ffebee;
-  --bg: #f4f6f9;
-  --card-bg: #ffffff;
-  --text: #202124;
-  --text-muted: #5f6368;
-  --border: #dadce0;
-  --shadow: 0 2px 8px rgba(0,0,0,0.12);
-  --radius: 12px;
+  /* Papel do tíquete e tinta */
+  --paper: #f6f1e4;
+  --paper-deep: #efe7d3;
+  --card-bg: #fffdf7;
+  --ink: #211c16;
+  --ink-soft: #6b6152;
+  --border: #ddd2b4;
+
+  /* Painel/quiosque */
+  --kiosk: #16202b;
+  --kiosk-soft: #26333f;
+
+  /* LEDs */
+  --led-amber: #d9820a;
+  --led-amber-glow: #ffb238;
+  --led-red: #d92b1f;
+  --led-red-glow: #ff5a45;
+  --ok-green: #2f9e5b;
+  --ok-green-bg: #e3f3e8;
+  --err-bg: #fbe6e2;
+
+  --shadow: 0 4px 14px rgba(33, 28, 22, 0.14);
+  --radius: 10px;
+
+  --font-display: 'Big Shoulders', 'Arial Narrow', sans-serif;
+  --font-led: 'VT323', 'Courier New', monospace;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Consolas', monospace;
 }
 
 body {
-  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  font-family: var(--font-body);
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(33,28,22,0.05) 1px, transparent 0);
+  background-size: 22px 22px;
+  color: var(--ink);
   min-height: 100vh;
 }
 
-/* ---- Navbar ---- */
+/* ---- Navbar: barra de quiosque ---- */
 nav {
-  background: var(--primary);
+  background: var(--kiosk);
   color: #fff;
   padding: 0 32px;
-  height: 60px;
+  height: 62px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  border-bottom: 3px solid var(--led-amber);
 }
 
 nav .nav-brand {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
   text-decoration: none;
   color: #fff;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 nav .nav-links {
   display: flex;
-  gap: 8px;
+  gap: 4px;
 }
 
 nav .nav-links a {
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.75);
   text-decoration: none;
-  padding: 6px 14px;
+  padding: 8px 14px;
   border-radius: 6px;
-  font-size: 0.9rem;
-  transition: background 0.2s;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, color 0.2s;
 }
 
-nav .nav-links a:hover,
-nav .nav-links a.active {
-  background: rgba(255,255,255,0.2);
+nav .nav-links a:hover {
+  background: rgba(255,255,255,0.1);
   color: #fff;
+}
+
+nav .nav-links a.active {
+  background: var(--led-amber);
+  color: var(--kiosk);
 }
 
 /* ---- Layout principal ---- */
@@ -81,38 +109,88 @@ main {
 /* ---- Card ---- */
 .card {
   background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 36px 40px;
   margin-bottom: 24px;
+  position: relative;
 }
 
 .card h2 {
-  font-size: 1.3rem;
-  color: var(--text-muted);
-  font-weight: 500;
-  margin-bottom: 28px;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 16px;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
 }
 
-/* ---- Número da senha (grande) ---- */
+.card .subtitulo {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+  border-bottom: 1px dashed var(--border);
+}
+
+/* ---- Nota técnica / explicação didática ---- */
+.nota-tecnica {
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: var(--paper-deep);
+  border-left: 3px solid var(--led-amber);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.nota-tecnica strong {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Display LED da senha ---- */
+.led-bezel {
+  background: var(--kiosk);
+  border-radius: 14px;
+  padding: 24px 20px 16px;
+  box-shadow: inset 0 0 24px rgba(0,0,0,0.5), 0 6px 18px rgba(0,0,0,0.25);
+  margin: 8px auto 0;
+}
+
 .senha-numero {
-  font-size: 7rem;
-  font-weight: 800;
+  font-family: var(--font-led);
+  font-size: 7.5rem;
+  font-weight: 400;
   text-align: center;
   line-height: 1;
-  letter-spacing: -2px;
+  letter-spacing: 4px;
 }
 
-.senha-numero.atendente { color: var(--primary); }
-.senha-numero.display   { color: var(--danger); }
+.senha-numero.atendente {
+  color: var(--led-amber-glow);
+  text-shadow: 0 0 12px rgba(255, 178, 56, 0.75), 0 0 28px rgba(255, 178, 56, 0.35);
+}
+
+.senha-numero.display {
+  color: var(--led-red-glow);
+  text-shadow: 0 0 12px rgba(255, 90, 69, 0.75), 0 0 28px rgba(255, 90, 69, 0.35);
+}
 
 .senha-label {
   text-align: center;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-top: 8px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 12px;
   margin-bottom: 32px;
 }
 
@@ -124,63 +202,89 @@ main {
   padding: 14px 32px;
   border: none;
   border-radius: 8px;
+  font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
   text-decoration: none;
 }
 
 .btn:active { transform: scale(0.98); }
 
 .btn-primary {
-  background: var(--primary);
-  color: #fff;
+  background: var(--led-amber);
+  color: #1a1200;
   width: 100%;
   justify-content: center;
   font-size: 1.1rem;
   padding: 16px;
+  box-shadow: 0 3px 0 #9c5e05, var(--shadow);
 }
 
-.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary:hover { background: var(--led-amber-glow); }
+.btn-primary:active { box-shadow: 0 1px 0 #9c5e05; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .btn-outline {
   background: transparent;
-  border: 2px solid var(--primary);
-  color: var(--primary);
+  border: 2px solid var(--kiosk);
+  color: var(--kiosk);
 }
 
-.btn-outline:hover { background: var(--primary); color: #fff; }
+.btn-outline:hover { background: var(--kiosk); color: #fff; }
 
-/* ---- Histórico ---- */
+/* ---- Histórico como tíquetes picotados ---- */
 .historico-lista {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 16px;
   margin-top: 16px;
 }
 
 .historico-lista li {
-  background: var(--danger-light);
-  color: var(--danger);
-  border: 1px solid var(--danger);
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-weight: 700;
+  position: relative;
+  background: var(--card-bg);
+  color: var(--ink);
+  border: 1.5px dashed var(--ink-soft);
+  border-radius: 4px;
+  padding: 10px 20px 10px 26px;
+  font-family: var(--font-mono);
+  font-weight: 600;
   font-size: 1rem;
+  box-shadow: 2px 3px 0 rgba(33,28,22,0.08);
 }
+
+.historico-lista li::before,
+.historico-lista li::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  width: 8px;
+  height: 8px;
+  background: var(--paper);
+  border: 1.5px dashed var(--ink-soft);
+  border-radius: 50%;
+}
+
+.historico-lista li::before { top: -5px; }
+.historico-lista li::after  { bottom: -5px; }
+
+.historico-lista li:nth-child(3n+1)  { transform: rotate(-1.4deg); }
+.historico-lista li:nth-child(3n+2)  { transform: rotate(0.8deg); }
 
 /* ---- Badge de status ---- */
 .badge-online {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--success-light);
-  color: var(--success);
+  background: var(--ok-green-bg);
+  color: var(--ok-green);
   border-radius: 20px;
   padding: 4px 12px;
-  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
   font-weight: 600;
   margin-bottom: 24px;
 }
@@ -189,7 +293,7 @@ main {
   content: '';
   width: 8px;
   height: 8px;
-  background: var(--success);
+  background: var(--ok-green);
   border-radius: 50%;
   animation: pulse 1.5s infinite;
 }
@@ -206,9 +310,12 @@ main {
 
 .form-group label {
   display: block;
-  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
   margin-bottom: 6px;
 }
 
@@ -217,14 +324,17 @@ main {
   padding: 12px 16px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
+  background: var(--paper);
+  font-family: var(--font-body);
   font-size: 1rem;
-  color: var(--text);
-  transition: border-color 0.2s;
+  color: var(--ink);
+  transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
 }
 
 .form-group input:focus {
-  border-color: var(--primary);
+  border-color: var(--led-amber);
+  box-shadow: 0 0 0 3px rgba(217, 130, 10, 0.18);
 }
 
 /* ---- Mensagens de feedback ---- */
@@ -237,8 +347,8 @@ main {
 }
 
 .alert.show { display: block; }
-.alert-success { background: var(--success-light); color: var(--success); }
-.alert-error   { background: var(--danger-light);  color: var(--danger);  }
+.alert-success { background: var(--ok-green-bg); color: var(--ok-green); }
+.alert-error   { background: var(--err-bg);      color: var(--led-red);  }
 
 /* ---- Home cards ---- */
 .home-grid {
@@ -250,32 +360,110 @@ main {
 
 .home-card {
   background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 32px 28px;
   text-decoration: none;
-  color: var(--text);
+  color: var(--ink);
   transition: transform 0.2s, box-shadow 0.2s;
   border-top: 4px solid transparent;
 }
 
 .home-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 22px rgba(33,28,22,0.2);
 }
 
-.home-card.card-atendente { border-color: var(--primary); }
-.home-card.card-display   { border-color: var(--danger); }
+.home-card.card-atendente { border-top-color: var(--led-amber); }
+.home-card.card-display   { border-top-color: var(--led-red); }
+.home-card.card-fluxo     { border-top-color: var(--kiosk); }
 
 .home-card .card-icon { font-size: 2.5rem; margin-bottom: 16px; }
-.home-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
-.home-card p  { font-size: 0.9rem; color: var(--text-muted); }
+.home-card h3 { font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 8px; }
+.home-card p  { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.4; }
+
+/* ---- Selo de instância (prova do Singleton) ---- */
+.instance-badge {
+  margin-top: 24px;
+  padding: 14px 18px;
+  background: var(--paper-deep);
+  border: 1.5px dashed var(--kiosk);
+  border-radius: 8px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--kiosk);
+}
+
+.instance-badge strong {
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.instance-badge .instance-hint {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+/* ---- Diagrama de fluxo (Mermaid animado) ---- */
+.diagrama-wrap {
+  position: relative;
+  margin-top: 28px;
+  padding: 20px;
+  background: var(--kiosk-soft);
+  border: 1px solid var(--kiosk);
+  border-radius: var(--radius);
+  overflow: auto;
+}
+
+.diagrama-wrap svg {
+  max-width: 100%;
+}
+
+.packet {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: var(--led-amber-glow);
+  box-shadow: 0 0 12px 4px rgba(255, 178, 56, 0.8);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.node-ativo {
+  stroke: var(--led-amber-glow) !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 8px rgba(255, 178, 56, 0.85));
+}
+
+.log-passos {
+  margin-top: 20px;
+  padding: 16px 20px 16px 36px;
+  background: #0f151c;
+  border-radius: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #cfead9;
+  line-height: 1.6;
+}
+
+.log-passos li { margin-bottom: 6px; }
+.log-passos li::marker { color: var(--led-amber-glow); }
 
 /* ---- Responsivo ---- */
 @media (max-width: 600px) {
   .home-grid { grid-template-columns: 1fr; }
   .senha-numero { font-size: 5rem; }
-  nav { padding: 0 16px; }
+  nav { padding: 0 16px; flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 10px; }
   main { margin: 20px auto; }
   .card { padding: 24px 20px; }
 }

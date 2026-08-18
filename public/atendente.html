@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atendente — Painel de Senhas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -13,28 +17,40 @@
   <div class="nav-links">
     <a href="/atendente" class="active">Atendente</a>
     <a href="/display">Display</a>
+    <a href="/fluxo">Fluxo</a>
     <a href="/login">Login</a>
   </div>
 </nav>
 
 <main>
   <div class="card">
-    <h2>🖥️ Painel de Controle — Geração de Senhas</h2>
+    <h2>🖥️ Guichê — Emissão de Senhas</h2>
+    <p class="subtitulo">
+      Cada clique chama <code style="font-family: var(--font-mono)">QueueService.getInstance()</code>
+      no servidor. É sempre a mesma instância — por isso o contador nunca reinicia entre requisições.
+    </p>
 
     <div id="alert" class="alert"></div>
 
-    <div class="senha-numero atendente" id="senhaAtual">—</div>
-    <p class="senha-label">Senha gerada mais recentemente</p>
+    <div class="led-bezel">
+      <div class="senha-numero atendente" id="senhaAtual">—</div>
+    </div>
+    <p class="senha-label">Última senha emitida</p>
 
     <button class="btn btn-primary" id="btnGerar" onclick="gerarNovaSenha()">
-      ➕ Gerar Nova Senha
+      ➕ Emitir Nova Senha
     </button>
+
+    <div class="instance-badge" id="instanceBadge">
+      🔒 Instância do servidor: <strong id="instanceId">…</strong>
+      <span class="instance-hint">Mesmo hash em qualquer aba — prova de que é o mesmo objeto Singleton</span>
+    </div>
   </div>
 
   <div class="card">
-    <h2>📋 Histórico de Senhas Geradas</h2>
+    <h2>📋 Talão de Senhas Emitidas</h2>
     <ul class="historico-lista" id="historico">
-      <li style="background:none;border:none;color:var(--text-muted)">Nenhuma senha gerada ainda.</li>
+      <li style="background:none;border:none;box-shadow:none;color:var(--ink-soft)">Nenhuma senha emitida ainda.</li>
     </ul>
   </div>
 </main>

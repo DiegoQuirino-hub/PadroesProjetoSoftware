@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Display — Painel de Senhas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -13,24 +17,36 @@
   <div class="nav-links">
     <a href="/atendente">Atendente</a>
     <a href="/display" class="active">Display</a>
+    <a href="/fluxo">Fluxo</a>
     <a href="/login">Login</a>
   </div>
 </nav>
 
 <main>
   <div class="card">
-    <h2>📺 Painel do Guichê — Chamada de Senhas</h2>
+    <h2>📺 Chamada de Senhas</h2>
+    <p class="subtitulo">
+      Este painel consulta a API a cada 2 segundos. Abra várias abas desta página:
+      todas vão mostrar exatamente o mesmo número, porque todas leem do mesmo objeto no servidor.
+    </p>
 
     <span class="badge-online">Atualizando em tempo real</span>
 
-    <div class="senha-numero display" id="senhaAtual">—</div>
+    <div class="led-bezel">
+      <div class="senha-numero display" id="senhaAtual">—</div>
+    </div>
     <p class="senha-label">Senha sendo atendida agora</p>
+
+    <div class="instance-badge" id="instanceBadge">
+      🔒 Instância do servidor: <strong id="instanceId">…</strong>
+      <span class="instance-hint">Compare com a mesma tela do Atendente — o ID é idêntico</span>
+    </div>
   </div>
 
   <div class="card">
     <h2>📋 Últimas Senhas Chamadas</h2>
     <ul class="historico-lista" id="historico">
-      <li style="background:none;border:none;color:var(--text-muted)">Aguardando chamadas...</li>
+      <li style="background:none;border:none;box-shadow:none;color:var(--ink-soft)">Aguardando chamadas...</li>
     </ul>
   </div>
 </main>

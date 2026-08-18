@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluxo do Singleton — Painel de Senhas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
+  <div class="nav-links">
+    <a href="/atendente">Atendente</a>
+    <a href="/display">Display</a>
+    <a href="/fluxo" class="active">Fluxo</a>
+    <a href="/login">Login</a>
+  </div>
+</nav>
+
+<main style="max-width: 1000px;">
+  <div class="card">
+    <h2>🔎 Fluxo do Singleton em tempo real</h2>
+    <p class="subtitulo">
+      Clique no botão para emitir uma senha de verdade na API. A animação mostra, passo a passo,
+      a requisição saindo do Atendente, passando pelo Controller e chegando à
+      <strong style="color: var(--ink)">mesma instância</strong> de <code style="font-family: var(--font-mono)">QueueService</code>
+      — que então avisa os dois displays.
+    </p>
+
+    <button class="btn btn-primary" id="btnSimular" style="width:auto; padding: 14px 32px;">
+      ▶️ Emitir Nova Senha (fluxo real)
+    </button>
+
+    <div id="diagrama" class="diagrama-wrap"></div>
+
+    <ol id="logPassos" class="log-passos"></ol>
+
+    <div class="nota-tecnica">
+      <strong>Por que isso prova o Singleton</strong><br>
+      O Controller nunca faz <code style="font-family: var(--font-mono)">new QueueService()</code>. Ele chama
+      <code style="font-family: var(--font-mono)">getInstance()</code>, que devolve sempre a mesma referência
+      criada na primeira vez que alguém pediu uma senha. Por isso o contador e o histórico
+      são compartilhados por qualquer tela que consultar a fila.
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="/js/fluxo.js"></script>
+</body>
+</html>
