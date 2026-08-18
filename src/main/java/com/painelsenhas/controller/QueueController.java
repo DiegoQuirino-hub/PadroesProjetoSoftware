@@ -42,4 +42,16 @@ public class QueueController {
         List<Integer> historico = QueueService.getInstance().getHistory();
         return ResponseEntity.ok(historico);
     }
+
+    // GET /api/fila/instancia
+    // Prova em tempo real do Singleton: todo cliente que consultar essa rota,
+    // não importa a aba/navegador, recebe o mesmo instanceId — pois é a mesma
+    // instância de QueueService compartilhada por toda a aplicação.
+    @GetMapping("/instancia")
+    public ResponseEntity<InstanceInfo> getInstancia() {
+        QueueService instance = QueueService.getInstance();
+        return ResponseEntity.ok(new InstanceInfo(instance.getInstanceId(), instance.getCreatedAt()));
+    }
+
+    public record InstanceInfo(String instanceId, String createdAt) {}
 }
