@@ -299,7 +299,22 @@ até a senha gerada de fato ser exibida no final.
 | GET | `/api/fila/historico` | Histórico de senhas chamadas | Pública |
 | GET | `/api/fila/instancia` | ID e horário de criação da instância do Singleton | Pública |
 
-## 7. Como executar
+## 7. Documentação interativa (Swagger)
+
+A API também tem uma página de testes gerada automaticamente pelo Swagger
+(springdoc-openapi). Com o back-end rodando, acesse:
+
+```
+http://localhost:8080/swagger-ui.html
+```
+
+Lá é possível ver todos os endpoints agrupados, ler a descrição de cada um (a mesma
+explicação usada neste documento, escrita direto nas anotações do código) e clicar em
+**"Try it out"** para chamar a API de verdade sem precisar do front-end nem do
+`curl` — ótimo para, durante a aula, mostrar o endpoint `GET /api/fila/instancia`
+sendo chamado duas vezes seguidas e o `instanceId` não mudar.
+
+## 8. Como executar
 
 ```bash
 # Back-end (Spring Boot) — porta 8080
@@ -310,9 +325,10 @@ npm install
 npm start
 ```
 
-Depois, acesse `http://localhost:3000` no navegador.
+Depois, acesse `http://localhost:3000` no navegador (ou `http://localhost:8080/swagger-ui.html`
+para testar a API diretamente).
 
-## 8. Resumo em uma frase
+## 9. Resumo em uma frase
 
 > O `QueueService` é a única "máquina de senhas" que existe na memória do servidor:
 > o construtor privado impede que alguém crie outra, e o `getInstance()` garante que
