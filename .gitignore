@@ -16,3 +16,6 @@ Thumbs.db
 
 # Credenciais — nunca versionar
 application-prod.properties
+
+# Banco SQLite local
+*.db
