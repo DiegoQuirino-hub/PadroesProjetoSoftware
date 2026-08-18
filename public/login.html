@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Painel de Senhas</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
+  <div class="nav-links">
+    <a href="/atendente">Atendente</a>
+    <a href="/display">Display</a>
+    <a href="/login" class="active">Login</a>
+  </div>
+</nav>
+
+<main style="max-width: 460px;">
+
+  <!-- Tabs -->
+  <div style="display:flex; gap:0; margin-bottom:-1px; position:relative; z-index:1;">
+    <button class="tab-btn active" id="tab-login" onclick="showTab('login')">Entrar</button>
+    <button class="tab-btn" id="tab-register" onclick="showTab('register')">Registrar</button>
+  </div>
+
+  <!-- Login -->
+  <div class="card" id="form-login">
+    <h2>🔐 Acesso ao Sistema</h2>
+
+    <div id="alert-login" class="alert"></div>
+
+    <div class="form-group">
+      <label for="login-email">E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com">
+    </div>
+    <div class="form-group">
+      <label for="login-senha">Senha</label>
+      <input type="password" id="login-senha" placeholder="••••••••">
+    </div>
+
+    <button class="btn btn-primary" onclick="fazerLogin()">Entrar</button>
+
+    <p style="text-align:center; margin-top:16px; font-size:0.9rem; color:var(--text-muted)">
+      Não tem conta? <a href="#" onclick="showTab('register')" style="color:var(--primary)">Registre-se</a>
+    </p>
+  </div>
+
+  <!-- Registro -->
+  <div class="card" id="form-register" style="display:none;">
+    <h2>📝 Criar Conta</h2>
+
+    <div id="alert-register" class="alert"></div>
+
+    <div class="form-group">
+      <label for="reg-email">E-mail</label>
+      <input type="email" id="reg-email" placeholder="seu@email.com">
+    </div>
+    <div class="form-group">
+      <label for="reg-senha">Senha</label>
+      <input type="password" id="reg-senha" placeholder="Mínimo 6 caracteres">
+    </div>
+
+    <button class="btn btn-primary" onclick="fazerRegistro()">Criar Conta</button>
+
+    <p style="text-align:center; margin-top:16px; font-size:0.9rem; color:var(--text-muted)">
+      Já tem conta? <a href="#" onclick="showTab('login')" style="color:var(--primary)">Entrar</a>
+    </p>
+  </div>
+
+</main>
+
+<style>
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: background 0.2s;
+}
+.tab-btn:first-child { border-radius: 8px 0 0 0; }
+.tab-btn:last-child  { border-radius: 0 8px 0 0; }
+.tab-btn.active {
+  background: var(--card-bg);
+  color: var(--primary);
+  border-bottom-color: var(--card-bg);
+}
+</style>
+
+<script src="/js/auth.js"></script>
+</body>
+</html>
