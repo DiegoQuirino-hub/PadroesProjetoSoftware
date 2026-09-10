@@ -1,6 +1,6 @@
 package com.painelsenhas.config;
 
-import com.painelsenhas.repository.UserRepository;
+import com.painelsenhas.auth.adapter.out.persistence.UserJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -64,7 +64,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository) {
+    public UserDetailsService userDetailsService(UserJpaRepository userRepository) {
         return email -> userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
     }

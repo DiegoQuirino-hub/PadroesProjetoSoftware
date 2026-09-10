@@ -1,22 +1,22 @@
-// Anima o fluxo real de uma requisição de geração de senha sobre um diagrama Mermaid,
-// para deixar visível — durante uma aula — o caminho que passa sempre pela MESMA
-// instância de QueueService (o Singleton).
+// Anima o caminho real de uma emissão de senha sobre um diagrama Mermaid,
+// deixando visível que a requisição passa sempre pela MESMA instância de
+// QueueService (o Singleton).
 
-const definicao = `
-flowchart LR
-    ATD["🖥️ Atendente"]
-    CTRL["⚙️ QueueController"]
-    SVC(("🔒 QueueService<br/>«Singleton»"))
-    D1["📺 Display A"]
-    D2["📺 Display B"]
+var definicao = [
+  'flowchart LR',
+  'flowchart LR',
+  '  ATD["Atendente"]',
+  '  CTRL["QueueController"]',
+  '  SVC(("QueueService<br/>«Singleton»"))',
+  '  D1["Display A"]',
+  '  D2["Display B"]',
+  '  ATD -->|"POST /api/fila/gerar"| CTRL',
+  '  CTRL -->|"getInstance()"| SVC',
+  '  SVC -->|"estado"| D1',
+  '  SVC -->|"estado"| D2'
+].join('\n');
 
-    ATD -->|"POST /api/fila/gerar"| CTRL
-    CTRL -->|"getInstance()"| SVC
-    SVC -->|"notifica"| D1
-    SVC -->|"notifica"| D2
-`;
-
-let mermaidPronto = false;
+var mermaidPronto = false;
 
 async function iniciarDiagrama() {
   mermaid.initialize({
@@ -24,128 +24,115 @@ async function iniciarDiagrama() {
     theme: 'base',
     themeVariables: {
       fontFamily: 'IBM Plex Mono, monospace',
-      primaryColor: '#26333f',
-      primaryTextColor: '#f6f1e4',
-      primaryBorderColor: '#d9820a',
-      lineColor: '#d9820a',
-      secondaryColor: '#16202b',
-      tertiaryColor: '#16202b',
-      background: '#16202b',
-      mainBkg: '#26333f',
-      nodeBorder: '#d9820a',
-      clusterBkg: '#16202b',
-      edgeLabelBackground: '#16202b',
-      textColor: '#f6f1e4',
-    },
+      primaryColor: '#16262A',
+      primaryTextColor: '#EAF0EE',
+      primaryBorderColor: '#E86A17',
+      lineColor: '#8CA3A0',
+      secondaryColor: '#0E1719',
+      tertiaryColor: '#0E1719',
+      background: '#0E1719',
+      mainBkg: '#16262A',
+      nodeBorder: '#E86A17',
+      clusterBkg: '#0E1719',
+      edgeLabelBackground: '#0E1719',
+      textColor: '#EAF0EE'
+    }
   });
-  const { svg } = await mermaid.render('grafoFluxo', definicao);
-  document.getElementById('diagrama').innerHTML = svg;
+  var out = await mermaid.render('grafoFluxo', definicao);
+  document.getElementById('diagrama').innerHTML = out.svg;
   mermaidPronto = true;
 }
 
-function encontrarNodePorTexto(trecho) {
-  const nodes = document.querySelectorAll('#diagrama .node');
-  for (const n of nodes) {
-    if (n.textContent.includes(trecho)) return n;
+function acharNode(trecho) {
+  var nodes = document.querySelectorAll('#diagrama .node');
+  for (var i = 0; i < nodes.length; i++) {
+    if (nodes[i].textContent.indexOf(trecho) !== -1) return nodes[i];
   }
   return null;
 }
 
-function centro(elemento) {
-  const containerRect = document.getElementById('diagrama').getBoundingClientRect();
-  const r = elemento.getBoundingClientRect();
-  return {
-    x: r.left + r.width / 2 - containerRect.left,
-    y: r.top + r.height / 2 - containerRect.top,
-  };
+function centro(el) {
+  var box = document.getElementById('diagrama').getBoundingClientRect();
+  var r = el.getBoundingClientRect();
+  return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top };
 }
 
-function pulsar(elemento, classe = 'node-ativo') {
-  const forma = elemento.querySelector('rect, polygon, circle, ellipse');
+function pulsar(el) {
+  var forma = el.querySelector('rect, polygon, circle, ellipse');
   if (!forma) return;
-  forma.classList.add(classe);
-  setTimeout(() => forma.classList.remove(classe), 900);
+  forma.classList.add('node-active');
+  setTimeout(function () { forma.classList.remove('node-active'); }, 900);
 }
 
-function moverPacote(deElemento, paraElemento, duracaoMs = 700) {
-  return new Promise((resolve) => {
-    const wrap = document.getElementById('diagrama');
-    const packet = document.createElement('div');
+function moverPacote(de, para, ms) {
+  ms = ms || 700;
+  return new Promise(function (resolve) {
+    var wrap = document.getElementById('diagrama');
+    var packet = document.createElement('div');
     packet.className = 'packet';
     wrap.appendChild(packet);
 
-    const inicio = centro(deElemento);
-    const fim = centro(paraElemento);
+    var ini = centro(de), fim = centro(para);
+    packet.style.left = ini.x + 'px';
+    packet.style.top = ini.y + 'px';
+    packet.style.transition = 'left ' + ms + 'ms ease, top ' + ms + 'ms ease';
 
-    packet.style.left = `${inicio.x}px`;
-    packet.style.top = `${inicio.y}px`;
-    packet.style.transition = `left ${duracaoMs}ms ease, top ${duracaoMs}ms ease`;
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        packet.style.left = `${fim.x}px`;
-        packet.style.top = `${fim.y}px`;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        packet.style.left = fim.x + 'px';
+        packet.style.top = fim.y + 'px';
       });
     });
-
-    setTimeout(() => {
-      pulsar(paraElemento);
-      packet.remove();
-      resolve();
-    }, duracaoMs + 30);
+    setTimeout(function () { pulsar(para); packet.remove(); resolve(); }, ms + 30);
   });
 }
 
-function logPasso(texto) {
-  const li = document.createElement('li');
+function logPasso(texto, erro) {
+  var li = document.createElement('li');
   li.textContent = texto;
-  const lista = document.getElementById('logPassos');
+  if (erro) li.className = 'is-error';
+  var lista = document.getElementById('logPassos');
   lista.appendChild(li);
   lista.scrollTop = lista.scrollHeight;
 }
 
-function limparLog() {
-  document.getElementById('logPassos').innerHTML = '';
-}
-
 async function simularFluxo() {
-  const btn = document.getElementById('btnSimular');
+  var btn = document.getElementById('btnSimular');
   btn.disabled = true;
-  limparLog();
+  document.getElementById('logPassos').innerHTML = '';
 
   if (!mermaidPronto) await iniciarDiagrama();
 
-  const atd = encontrarNodePorTexto('Atendente');
-  const ctrl = encontrarNodePorTexto('QueueController');
-  const svc = encontrarNodePorTexto('QueueService');
-  const d1 = encontrarNodePorTexto('Display A');
-  const d2 = encontrarNodePorTexto('Display B');
+  var atd = acharNode('Atendente');
+  var ctrl = acharNode('QueueController');
+  var svc = acharNode('QueueService');
+  var d1 = acharNode('Display A');
+  var d2 = acharNode('Display B');
 
   pulsar(atd);
-  logPasso('1. Atendente dispara POST /api/fila/gerar');
+  logPasso('Atendente dispara POST /api/fila/gerar');
   await moverPacote(atd, ctrl);
 
-  logPasso('2. QueueController recebe a requisição e chama QueueService.getInstance()');
+  logPasso('QueueController recebe a requisição e chama QueueService.getInstance()');
   await moverPacote(ctrl, svc);
 
-  let resultado;
+  var resultado;
   try {
-    const res = await fetch('/api/fila/gerar', { method: 'POST' });
+    var res = await fetch('/api/fila/gerar', { method: 'POST' });
     resultado = await res.json();
-  } catch {
-    logPasso('❌ Erro ao chamar a API. Verifique se o back-end está rodando.');
+  } catch (e) {
+    logPasso('Erro ao chamar a API. Verifique se o back-end está no ar.', true);
     btn.disabled = false;
     return;
   }
 
-  logPasso(`3. getInstance() reaproveita a instância já existente — nova senha gerada: ${resultado}`);
+  logPasso('getInstance() reaproveita a instância existente — nova senha: ' + resultado);
   pulsar(svc);
 
-  logPasso('4. QueueService (a mesma instância) propaga o novo estado para os displays');
+  logPasso('A mesma instância propaga o novo estado para os displays');
   await Promise.all([moverPacote(svc, d1), moverPacote(svc, d2)]);
 
-  logPasso('5. Display A e Display B mostram a mesma senha — porque leram do mesmo objeto compartilhado');
-
+  logPasso('Display A e Display B mostram a mesma senha — leram do mesmo objeto');
   btn.disabled = false;
 }
 

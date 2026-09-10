@@ -1,4 +1,4 @@
-package com.painelsenhas.service;
+package com.painelsenhas.fila.domain;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

@@ -1,60 +1,52 @@
-// Equivalente ao Display.razor
-// Como não há SignalR, usa polling a cada 2 segundos (simula tempo real)
+// Painel de chamada — consulta a fila única a cada 2 s (não há SignalR).
 
-let ultimaSenha = null;
+var readoutEl = document.getElementById('senhaAtual');
+var historicoEl = document.getElementById('historico');
+var instanceEl = document.getElementById('instanceId');
+
+var ultimaSenha = null;
 
 async function carregarInstancia() {
   try {
-    const res = await fetch('/api/fila/instancia');
-    const { instanceId, createdAt } = await res.json();
-    document.getElementById('instanceId').textContent = `#${instanceId} (criada às ${createdAt})`;
-  } catch {
-    document.getElementById('instanceId').textContent = 'indisponível';
+    var res = await fetch('/api/fila/instancia');
+    var d = await res.json();
+    instanceEl.textContent = d.instanceId + ' · ' + d.createdAt;
+  } catch (e) {
+    instanceEl.textContent = 'indisponível';
   }
+}
+
+function renderHistorico(hist) {
+  if (!hist.length) {
+    historicoEl.innerHTML = '<li class="ledger-empty">Aguardando chamadas…</li>';
+    return;
+  }
+  historicoEl.innerHTML = hist.slice().reverse().slice(0, 6).map(function (n) {
+    return '<li><span class="ledger-n">' + String(n).padStart(3, '0') + '</span></li>';
+  }).join('');
 }
 
 async function atualizar() {
   try {
-    const [resAtual, resHistorico] = await Promise.all([
+    var [rAtual, rHist] = await Promise.all([
       fetch('/api/fila/atual'),
       fetch('/api/fila/historico')
     ]);
+    var senha = await rAtual.json();
+    var hist = await rHist.json();
 
-    const senha = await resAtual.json();
-    const historico = await resHistorico.json();
-
-    // Animação ao mudar a senha
-    if (senha !== ultimaSenha && senha > 0) {
-      const el = document.getElementById('senhaAtual');
-      el.style.transition = 'transform 0.3s, opacity 0.3s';
-      el.style.opacity = '0';
-      el.style.transform = 'scale(0.8)';
-      setTimeout(() => {
-        el.textContent = senha;
-        el.style.opacity = '1';
-        el.style.transform = 'scale(1)';
-      }, 300);
+    if (senha !== ultimaSenha) {
+      renderReadout(readoutEl, senha, { minCells: 3 });
       ultimaSenha = senha;
-    } else if (senha === 0) {
-      document.getElementById('senhaAtual').textContent = '—';
     }
-
-    // Historico
-    const ul = document.getElementById('historico');
-    if (historico.length === 0) {
-      ul.innerHTML = '<li style="background:none;border:none;color:var(--ink-soft)">Aguardando chamadas...</li>';
-    } else {
-      ul.innerHTML = [...historico].reverse()
-        .map(s => `<li>🎫 ${s}</li>`)
-        .join('');
-    }
-  } catch {
-    // Sem alert para não poluir o display em produção
-    console.warn('Falha ao buscar dados da API');
+    renderHistorico(hist);
+    setConnection(true);
+  } catch (e) {
+    setConnection(false);
   }
 }
 
-// Polling a cada 2 segundos
 carregarInstancia();
 atualizar();
 setInterval(atualizar, 2000);
+setInterval(carregarInstancia, 30000);

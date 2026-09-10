@@ -1,4 +1,4 @@
-package com.painelsenhas.model;
+package com.painelsenhas.auth.adapter.out.persistence;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

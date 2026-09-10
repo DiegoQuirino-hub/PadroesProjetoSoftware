@@ -1,70 +1,95 @@
-// Equivalente ao Atendente.razor
+// Console do atendente — emite senhas na fila única (QueueService no servidor).
 
-async function carregarEstadoInicial() {
-  try {
-    const res = await fetch('/api/fila/atual');
-    const senha = await res.json();
-    if (senha > 0) document.getElementById('senhaAtual').textContent = senha;
-    await carregarHistorico();
-    await carregarInstancia();
-  } catch {
-    mostrarAlerta('Não foi possível conectar à API. Verifique se o servidor Java está rodando.', 'error');
+var readoutEl = document.getElementById('senhaAtual');
+var btn = document.getElementById('btnGerar');
+var toastEl = document.getElementById('toast');
+var historicoEl = document.getElementById('historico');
+var totalEl = document.getElementById('totalEmitidas');
+var instanceEl = document.getElementById('instanceId');
+
+var emissoes = []; // { n, hora } — hora só para as emitidas nesta sessão
+
+function agora() {
+  return new Date().toLocaleTimeString('pt-BR', { hour12: false });
+}
+
+function toast(msg, tipo) {
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show ' + (tipo ? 'is-' + tipo : '');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function () { toastEl.className = 'toast'; }, 3200);
+}
+
+function renderHistorico() {
+  if (emissoes.length === 0) {
+    historicoEl.innerHTML = '<li class="ledger-empty">Nenhuma senha emitida ainda.</li>';
+  } else {
+    historicoEl.innerHTML = emissoes.map(function (e) {
+      return '<li><span class="ledger-n">' + String(e.n).padStart(3, '0') + '</span>' +
+             '<span class="ledger-t">' + (e.hora || 'sessão anterior') + '</span></li>';
+    }).join('');
   }
+  totalEl.textContent = emissoes.length + (emissoes.length === 1 ? ' hoje' : ' hoje');
 }
 
 async function carregarInstancia() {
   try {
-    const res = await fetch('/api/fila/instancia');
-    const { instanceId, createdAt } = await res.json();
-    document.getElementById('instanceId').textContent = `#${instanceId} (criada às ${createdAt})`;
-  } catch {
-    document.getElementById('instanceId').textContent = 'indisponível';
+    var res = await fetch('/api/fila/instancia');
+    var d = await res.json();
+    instanceEl.textContent = d.instanceId + ' · no ar desde ' + d.createdAt;
+  } catch (e) {
+    instanceEl.textContent = 'indisponível';
   }
 }
 
-async function gerarNovaSenha() {
-  const btn = document.getElementById('btnGerar');
-  btn.disabled = true;
-  btn.textContent = 'Gerando...';
-
+async function carregarEstado() {
   try {
-    const res = await fetch('/api/fila/gerar', { method: 'POST' });
+    var [rAtual, rHist] = await Promise.all([
+      fetch('/api/fila/atual'),
+      fetch('/api/fila/historico')
+    ]);
+    var atual = await rAtual.json();
+    var hist = await rHist.json();
 
-    if (!res.ok) throw new Error('Erro na API');
+    renderReadout(readoutEl, atual, { minCells: 3 });
+    emissoes = hist.slice().reverse().map(function (n) { return { n: n, hora: null }; });
+    renderHistorico();
+    setConnection(true);
+    carregarInstancia();
+  } catch (e) {
+    setConnection(false);
+    toast('Sem conexão com o servidor. Verifique se o back-end está no ar.', 'error');
+  }
+}
 
-    const novaSenha = await res.json();
-    document.getElementById('senhaAtual').textContent = novaSenha;
-    mostrarAlerta(`Senha ${novaSenha} gerada com sucesso!`, 'success');
-    await carregarHistorico();
-  } catch {
-    mostrarAlerta('Erro ao gerar senha. Tente novamente.', 'error');
+async function emitirSenha() {
+  btn.disabled = true;
+  try {
+    var res = await fetch('/api/fila/gerar', { method: 'POST' });
+    if (!res.ok) throw new Error('http ' + res.status);
+    var nova = await res.json();
+
+    renderReadout(readoutEl, nova, { minCells: 3 });
+    emissoes.unshift({ n: nova, hora: agora() });
+    renderHistorico();
+    toast('Senha ' + String(nova).padStart(3, '0') + ' emitida.', 'success');
+    setConnection(true);
+  } catch (e) {
+    setConnection(false);
+    toast('Não foi possível emitir a senha. Tente novamente.', 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '➕ Gerar Nova Senha';
   }
 }
 
-async function carregarHistorico() {
-  const res = await fetch('/api/fila/historico');
-  const lista = await res.json();
-  const ul = document.getElementById('historico');
+btn.addEventListener('click', emitirSenha);
 
-  if (lista.length === 0) {
-    ul.innerHTML = '<li style="background:none;border:none;color:var(--ink-soft)">Nenhuma senha gerada ainda.</li>';
-    return;
+document.addEventListener('keydown', function (e) {
+  if ((e.code === 'Space' || e.key === 'Enter') &&
+      !/^(INPUT|TEXTAREA|BUTTON)$/.test(document.activeElement.tagName)) {
+    e.preventDefault();
+    emitirSenha();
   }
+});
 
-  ul.innerHTML = [...lista].reverse()
-    .map(s => `<li>🎫 ${s}</li>`)
-    .join('');
-}
-
-function mostrarAlerta(msg, tipo) {
-  const el = document.getElementById('alert');
-  el.textContent = msg;
-  el.className = `alert alert-${tipo} show`;
-  setTimeout(() => { el.className = 'alert'; }, 3000);
-}
-
-// Inicializa ao carregar a página
-carregarEstadoInicial();
+carregarEstado();

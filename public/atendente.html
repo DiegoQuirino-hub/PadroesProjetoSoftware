@@ -3,58 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Atendente — Painel de Senhas</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
+  <title>Console do atendente — Painel de Senhas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='7' fill='%230E1719'/%3E%3Crect x='9' y='15' width='7' height='18' rx='1.5' fill='%23E86A17'/%3E%3Crect x='20.5' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.6'/%3E%3Crect x='32' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.35'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="page-console">
 
-<nav>
-  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
-  <div class="nav-links">
-    <a href="/atendente" class="active">Atendente</a>
+<header class="topbar">
+  <a class="brand" href="/">
+    <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="brand-name">Painel de Senhas</span>
+  </a>
+  <nav class="nav">
+    <a href="/atendente">Atendente</a>
     <a href="/display">Display</a>
     <a href="/fluxo">Fluxo</a>
     <a href="/login">Login</a>
+  </nav>
+  <div class="status" data-status="on">
+    <span class="lamp" aria-hidden="true"></span>
+    <span class="status-label"></span>
+    <span data-clock>--:--:--</span>
   </div>
-</nav>
+</header>
 
-<main>
-  <div class="card">
-    <h2>🖥️ Guichê — Emissão de Senhas</h2>
-    <p class="subtitulo">
-      Cada clique chama <code style="font-family: var(--font-mono)">QueueService.getInstance()</code>
-      no servidor. É sempre a mesma instância — por isso o contador nunca reinicia entre requisições.
-    </p>
-
-    <div id="alert" class="alert"></div>
-
-    <div class="led-bezel">
-      <div class="senha-numero atendente" id="senhaAtual">—</div>
-    </div>
-    <p class="senha-label">Última senha emitida</p>
-
-    <button class="btn btn-primary" id="btnGerar" onclick="gerarNovaSenha()">
-      ➕ Emitir Nova Senha
-    </button>
-
-    <div class="instance-badge" id="instanceBadge">
-      🔒 Instância do servidor: <strong id="instanceId">…</strong>
-      <span class="instance-hint">Mesmo hash em qualquer aba — prova de que é o mesmo objeto Singleton</span>
-    </div>
+<div class="shell">
+  <div class="page-head">
+    <p class="eyebrow">Guichê</p>
+    <h1>Console do atendente</h1>
+    <p>Cada emissão chama <code>QueueService.getInstance()</code> no servidor e recebe o próximo número da fila única.</p>
   </div>
 
-  <div class="card">
-    <h2>📋 Talão de Senhas Emitidas</h2>
-    <ul class="historico-lista" id="historico">
-      <li style="background:none;border:none;box-shadow:none;color:var(--ink-soft)">Nenhuma senha emitida ainda.</li>
-    </ul>
-  </div>
-</main>
+  <div class="stack">
+    <section class="panel" style="text-align:center;">
+      <div id="toast" class="toast" role="status"></div>
 
+      <div class="bezel">
+        <div class="readout is-empty" id="senhaAtual" role="img" aria-label="Última senha emitida"></div>
+      </div>
+      <p class="readout-label">Última senha emitida</p>
+
+      <div style="margin-top:26px;">
+        <button class="key key--lg" id="btnGerar" type="button">
+          Emitir senha <span class="key-hint">Espaço</span>
+        </button>
+      </div>
+
+      <div class="diag">
+        <span>nó do servidor</span> <b id="instanceId">…</b>
+        <span class="diag-note">O mesmo identificador em qualquer tela confirma que a fila é única.</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <span>Registro de emissão</span>
+        <span id="totalEmitidas">0 hoje</span>
+      </div>
+      <ul class="ledger" id="historico">
+        <li class="ledger-empty">Nenhuma senha emitida ainda.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<footer class="foot">Painel de Senhas · demonstração do padrão Singleton</footer>
+
+<script src="/js/shell.js"></script>
 <script src="/js/atendente.js"></script>
 </body>
 </html>

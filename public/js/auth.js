@@ -1,79 +1,77 @@
-// Equivalente às páginas de Identity do ASP.NET (Register / Login)
+// Acesso restrito — login e registro (equivalente ao Identity do ASP.NET).
 
-function showTab(tab) {
-  document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
-  document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('tab-login').className    = 'tab-btn' + (tab === 'login'    ? ' active' : '');
-  document.getElementById('tab-register').className = 'tab-btn' + (tab === 'register' ? ' active' : '');
+function switchView(view) {
+  document.getElementById('view-login').hidden = view !== 'login';
+  document.getElementById('view-register').hidden = view !== 'register';
+  document.getElementById('seg-login').classList.toggle('is-active', view === 'login');
+  document.getElementById('seg-register').classList.toggle('is-active', view === 'register');
+}
+
+document.querySelectorAll('[data-goto]').forEach(function (el) {
+  el.addEventListener('click', function () { switchView(el.dataset.goto); });
+});
+
+function alerta(form, msg, tipo) {
+  var el = document.getElementById('alert-' + form);
+  el.textContent = msg;
+  el.className = 'toast show ' + (tipo ? 'is-' + tipo : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(function () { el.className = 'toast'; }, 4000);
 }
 
 async function fazerLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  const senha = document.getElementById('login-senha').value;
-
-  if (!email || !senha) {
-    mostrarAlerta('login', 'Preencha e-mail e senha.', 'error');
-    return;
-  }
+  var email = document.getElementById('login-email').value.trim();
+  var senha = document.getElementById('login-senha').value;
+  if (!email || !senha) { alerta('login', 'Informe e-mail e senha.', 'error'); return; }
 
   try {
-    const res = await fetch('/api/auth/login', {
+    var res = await fetch('/api/auth/login', {
       method: 'POST',
-      headers: {
-        'Authorization': 'Basic ' + btoa(`${email}:${senha}`)
-      }
+      headers: { 'Authorization': 'Basic ' + btoa(email + ':' + senha) }
     });
-
     if (res.ok) {
-      // Guarda credenciais em memória (sessionStorage) para requisições futuras
-      sessionStorage.setItem('credentials', btoa(`${email}:${senha}`));
-      mostrarAlerta('login', 'Login realizado com sucesso! Redirecionando...', 'success');
-      setTimeout(() => window.location.href = '/', 1500);
+      sessionStorage.setItem('credentials', btoa(email + ':' + senha));
+      alerta('login', 'Acesso liberado. Redirecionando…', 'success');
+      setTimeout(function () { window.location.href = '/'; }, 1200);
     } else {
-      mostrarAlerta('login', 'E-mail ou senha incorretos.', 'error');
+      alerta('login', 'E-mail ou senha incorretos.', 'error');
     }
-  } catch {
-    mostrarAlerta('login', 'Erro de conexão com o servidor.', 'error');
+  } catch (e) {
+    alerta('login', 'Sem conexão com o servidor.', 'error');
   }
 }
 
 async function fazerRegistro() {
-  const email = document.getElementById('reg-email').value.trim();
-  const senha = document.getElementById('reg-senha').value;
-
-  if (!email || !senha) {
-    mostrarAlerta('register', 'Preencha e-mail e senha.', 'error');
-    return;
-  }
-
-  if (senha.length < 6) {
-    mostrarAlerta('register', 'A senha deve ter pelo menos 6 caracteres.', 'error');
-    return;
-  }
+  var email = document.getElementById('reg-email').value.trim();
+  var senha = document.getElementById('reg-senha').value;
+  if (!email || !senha) { alerta('register', 'Informe e-mail e senha.', 'error'); return; }
+  if (senha.length < 6) { alerta('register', 'A senha precisa ter ao menos 6 caracteres.', 'error'); return; }
 
   try {
-    const res = await fetch('/api/auth/register', {
+    var res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: senha })
+      body: JSON.stringify({ email: email, password: senha })
     });
-
-    const msg = await res.text();
-
+    var msg = await res.text();
     if (res.ok) {
-      mostrarAlerta('register', msg + ' Faça login para continuar.', 'success');
-      setTimeout(() => showTab('login'), 2000);
+      alerta('register', 'Conta criada. Faça login para continuar.', 'success');
+      setTimeout(function () { switchView('login'); }, 1600);
     } else {
-      mostrarAlerta('register', msg, 'error');
+      alerta('register', msg, 'error');
     }
-  } catch {
-    mostrarAlerta('register', 'Erro de conexão com o servidor.', 'error');
+  } catch (e) {
+    alerta('register', 'Sem conexão com o servidor.', 'error');
   }
 }
 
-function mostrarAlerta(form, msg, tipo) {
-  const el = document.getElementById(`alert-${form}`);
-  el.textContent = msg;
-  el.className = `alert alert-${tipo} show`;
-  setTimeout(() => { el.className = 'alert'; }, 4000);
-}
+document.getElementById('btnLogin').addEventListener('click', fazerLogin);
+document.getElementById('btnRegister').addEventListener('click', fazerRegistro);
+
+document.querySelectorAll('.field input').forEach(function (input) {
+  input.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    if (document.getElementById('view-login').hidden) fazerRegistro();
+    else fazerLogin();
+  });
+});

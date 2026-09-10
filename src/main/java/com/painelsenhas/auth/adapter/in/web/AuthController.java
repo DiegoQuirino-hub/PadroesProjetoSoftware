@@ -1,42 +1,34 @@
-package com.painelsenhas.controller;
+package com.painelsenhas.auth.adapter.in.web;
 
-import com.painelsenhas.model.ApplicationUser;
-import com.painelsenhas.repository.UserRepository;
+import com.painelsenhas.auth.application.port.in.RegistrarUsuarioUseCase;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * Adapter de entrada (REST) para autenticação.
  * Equivalente às páginas de Identity (Register/Login) geradas pelo ASP.NET Identity.
  */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final RegistrarUsuarioUseCase registrarUsuarioUseCase;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(RegistrarUsuarioUseCase registrarUsuarioUseCase) {
+        this.registrarUsuarioUseCase = registrarUsuarioUseCase;
     }
 
     // POST /api/auth/register
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity.badRequest().body("E-mail já cadastrado.");
+        try {
+            registrarUsuarioUseCase.registrar(request.email(), request.password());
+        } catch (RegistrarUsuarioUseCase.EmailJaCadastradoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        ApplicationUser user = new ApplicationUser();
-        user.setEmail(request.email());
-        user.setPasswordHash(passwordEncoder.encode(request.password()));
-        user.setEmailConfirmed(true); // sem envio de e-mail, equivalente ao IdentityNoOpEmailSender
-
-        userRepository.save(user);
         return ResponseEntity.ok("Usuário registrado com sucesso.");
     }
 
