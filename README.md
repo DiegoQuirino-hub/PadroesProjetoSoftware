@@ -80,7 +80,7 @@ Sobe em `http://localhost:8080`. Configure a conexão em `src/main/resources/app
 git checkout frontend
 npm install
 npm start
-```
+```'
 Sobe em `http://localhost:3000` e faz proxy de `/api/*` para o back-end em `:8080`.
 
 ## Endpoints principais
