@@ -4,76 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel de Senhas</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='7' fill='%230E1719'/%3E%3Crect x='9' y='15' width='7' height='18' rx='1.5' fill='%23E86A17'/%3E%3Crect x='20.5' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.6'/%3E%3Crect x='32' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.35'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="page-index">
+<body>
 
-<header class="topbar">
-  <a class="brand" href="/">
-    <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="brand-name">Painel de Senhas</span>
-  </a>
-  <nav class="nav">
+<nav>
+  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
+  <div class="nav-links">
     <a href="/atendente">Atendente</a>
     <a href="/display">Display</a>
     <a href="/fluxo">Fluxo</a>
     <a href="/login">Login</a>
-  </nav>
-  <div class="status" data-status="on">
-    <span class="lamp" aria-hidden="true"></span>
-    <span class="status-label"></span>
-    <span data-clock>--:--:--</span>
   </div>
-</header>
+</nav>
 
-<div class="shell">
-  <div class="home">
-    <div class="home-rail">
-      <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
-      <h1>Gestão de fila de atendimento</h1>
-      <p>
-        Um único ponto de controle no servidor. Todos os guichês emitem e todos
-        os painéis exibem a partir da mesma fila — o contador nunca se divide
-        nem reinicia entre requisições.
-      </p>
-      <p class="rail-tag">fila única · servidor central</p>
+<main>
+  <div class="card">
+    <h2>Emissor de senhas de atendimento</h2>
+    <p class="subtitulo">
+      Um exemplo prático do padrão <strong style="font-family: var(--font-mono); color: var(--ink);">Singleton</strong>:
+      não importa quantos guichês emitam senha ou quantos painéis exibam a chamada —
+      todos conversam com a <em>mesma</em> instância de fila no servidor. Escolha um painel:
+    </p>
+
+    <div class="home-grid">
+      <a href="/atendente" class="home-card card-atendente">
+        <div class="card-icon">🖥️</div>
+        <h3>Atendente</h3>
+        <p>Emite uma nova senha e mantém o histórico de chamadas.</p>
+      </a>
+
+      <a href="/display" class="home-card card-display">
+        <div class="card-icon">📺</div>
+        <h3>Display</h3>
+        <p>Mostra a senha sendo chamada agora, em tempo real.</p>
+      </a>
+
+      <a href="/fluxo" class="home-card card-fluxo">
+        <div class="card-icon">🔎</div>
+        <h3>Fluxo do Singleton</h3>
+        <p>Anima o caminho de uma requisição real até a instância compartilhada.</p>
+      </a>
+
+      <a href="/login" class="home-card">
+        <div class="card-icon">🔐</div>
+        <h3>Login</h3>
+        <p>Área autenticada, equivalente ao Identity do ASP.NET.</p>
+      </a>
     </div>
-
-    <nav class="directory" aria-label="Telas do sistema">
-      <a class="dir-row" href="/atendente">
-        <span class="dir-id">01</span>
-        <span class="dir-name">Atendente</span>
-        <span class="dir-desc">Emitir senhas e acompanhar o registro de emissão do dia</span>
-        <span class="dir-go">Abrir</span>
-      </a>
-      <a class="dir-row" href="/display">
-        <span class="dir-id">02</span>
-        <span class="dir-name">Display</span>
-        <span class="dir-desc">Painel de chamada para a sala de espera, atualizado ao vivo</span>
-        <span class="dir-go">Abrir</span>
-      </a>
-      <a class="dir-row" href="/fluxo">
-        <span class="dir-id">03</span>
-        <span class="dir-name">Fluxo</span>
-        <span class="dir-desc">Como uma requisição percorre o sistema até a fila compartilhada</span>
-        <span class="dir-go">Abrir</span>
-      </a>
-      <a class="dir-row" href="/login">
-        <span class="dir-id">04</span>
-        <span class="dir-name">Login</span>
-        <span class="dir-desc">Acesso à área restrita da operação</span>
-        <span class="dir-go">Abrir</span>
-      </a>
-    </nav>
   </div>
-</div>
+</main>
 
-<footer class="foot">Painel de Senhas · demonstração do padrão Singleton</footer>
-
-<script src="/js/shell.js"></script>
 </body>
 </html>

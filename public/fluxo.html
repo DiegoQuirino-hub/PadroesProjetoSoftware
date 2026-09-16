@@ -3,65 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fluxo — Painel de Senhas</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='7' fill='%230E1719'/%3E%3Crect x='9' y='15' width='7' height='18' rx='1.5' fill='%23E86A17'/%3E%3Crect x='20.5' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.6'/%3E%3Crect x='32' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.35'/%3E%3C/svg%3E">
+  <title>Fluxo do Singleton — Painel de Senhas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="page-flow">
+<body>
 
-<header class="topbar">
-  <a class="brand" href="/">
-    <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="brand-name">Painel de Senhas</span>
-  </a>
-  <nav class="nav">
+<nav>
+  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
+  <div class="nav-links">
     <a href="/atendente">Atendente</a>
     <a href="/display">Display</a>
-    <a href="/fluxo">Fluxo</a>
+    <a href="/fluxo" class="active">Fluxo</a>
     <a href="/login">Login</a>
-  </nav>
-  <div class="status" data-status="on">
-    <span class="lamp" aria-hidden="true"></span>
-    <span class="status-label"></span>
-    <span data-clock>--:--:--</span>
   </div>
-</header>
+</nav>
 
-<div class="shell">
-  <div class="page-head">
-    <p class="eyebrow">Como funciona</p>
-    <h1>Como a fila se mantém única</h1>
-    <p>
-      O botão abaixo emite uma senha real na API. A animação acompanha a
-      requisição saindo do atendente, passando pelo controller e chegando à
-      mesma instância de <code>QueueService</code>, que então atualiza os displays.
+<main style="max-width: 1000px;">
+  <div class="card">
+    <h2>🔎 Fluxo do Singleton em tempo real</h2>
+    <p class="subtitulo">
+      Clique no botão para emitir uma senha de verdade na API. A animação mostra, passo a passo,
+      a requisição saindo do Atendente, passando pelo Controller e chegando à
+      <strong style="color: var(--ink)">mesma instância</strong> de <code style="font-family: var(--font-mono)">QueueService</code>
+      — que então avisa os dois displays.
     </p>
-  </div>
 
-  <section class="panel">
-    <button class="key" id="btnSimular" type="button">Emitir senha e acompanhar</button>
+    <button class="btn btn-primary" id="btnSimular" style="width:auto; padding: 14px 32px;">
+      ▶️ Emitir Nova Senha (fluxo real)
+    </button>
 
-    <div id="diagrama" class="flow-diagram"></div>
+    <div id="diagrama" class="diagrama-wrap"></div>
 
-    <ol id="logPassos" class="flow-log"></ol>
+    <ol id="logPassos" class="log-passos"></ol>
 
-    <div class="callout">
-      <b>Por que isso prova o Singleton</b>
-      O controller nunca faz <code>new QueueService()</code>. Ele chama
-      <code>getInstance()</code>, que devolve sempre a referência criada na
-      primeira chamada. Contador e histórico ficam compartilhados por qualquer
-      tela que consulte a fila.
+    <div class="nota-tecnica">
+      <strong>Por que isso prova o Singleton</strong><br>
+      O Controller nunca faz <code style="font-family: var(--font-mono)">new QueueService()</code>. Ele chama
+      <code style="font-family: var(--font-mono)">getInstance()</code>, que devolve sempre a mesma referência
+      criada na primeira vez que alguém pediu uma senha. Por isso o contador e o histórico
+      são compartilhados por qualquer tela que consultar a fila.
     </div>
-  </section>
-</div>
-
-<footer class="foot">Painel de Senhas · demonstração do padrão Singleton</footer>
+  </div>
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script src="/js/shell.js"></script>
 <script src="/js/fluxo.js"></script>
 </body>
 </html>
