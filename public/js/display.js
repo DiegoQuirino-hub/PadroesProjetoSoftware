@@ -1,52 +1,69 @@
-// Painel de chamada — consulta a fila única a cada 2 s (não há SignalR).
+// Equivalente ao Display.razor
+// Como não há SignalR, usa polling a cada 2 segundos (simula tempo real)
+// Agora exibindo o código da senha (ex: V001) e a fila de espera por tipo
 
-var readoutEl = document.getElementById('senhaAtual');
-var historicoEl = document.getElementById('historico');
-var instanceEl = document.getElementById('instanceId');
-
-var ultimaSenha = null;
+let ultimoCodigo = null;
 
 async function carregarInstancia() {
   try {
-    var res = await fetch('/api/fila/instancia');
-    var d = await res.json();
-    instanceEl.textContent = d.instanceId + ' · ' + d.createdAt;
-  } catch (e) {
-    instanceEl.textContent = 'indisponível';
+    const res = await fetch('/api/fila/instancia');
+    const { instanceId, createdAt } = await res.json();
+    document.getElementById('instanceId').textContent = `#${instanceId} (criada às ${createdAt})`;
+  } catch {
+    document.getElementById('instanceId').textContent = 'indisponível';
   }
-}
-
-function renderHistorico(hist) {
-  if (!hist.length) {
-    historicoEl.innerHTML = '<li class="ledger-empty">Aguardando chamadas…</li>';
-    return;
-  }
-  historicoEl.innerHTML = hist.slice().reverse().slice(0, 6).map(function (n) {
-    return '<li><span class="ledger-n">' + String(n).padStart(3, '0') + '</span></li>';
-  }).join('');
 }
 
 async function atualizar() {
   try {
-    var [rAtual, rHist] = await Promise.all([
+    const [resAtual, resHistorico, resEspera] = await Promise.all([
       fetch('/api/fila/atual'),
-      fetch('/api/fila/historico')
+      fetch('/api/fila/historico'),
+      fetch('/api/fila/espera')
     ]);
-    var senha = await rAtual.json();
-    var hist = await rHist.json();
 
-    if (senha !== ultimaSenha) {
-      renderReadout(readoutEl, senha, { minCells: 3 });
-      ultimaSenha = senha;
+    const senha = resAtual.status === 204 ? null : await resAtual.json();
+    const historico = await resHistorico.json();
+    const espera = await resEspera.json();
+
+    // Animação ao mudar a senha
+    if (senha && senha.codigo !== ultimoCodigo) {
+      const el = document.getElementById('senhaAtual');
+      el.style.transition = 'transform 0.3s, opacity 0.3s';
+      el.style.opacity = '0';
+      el.style.transform = 'scale(0.8)';
+      setTimeout(() => {
+        el.textContent = senha.codigo;
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1)';
+      }, 300);
+      ultimoCodigo = senha.codigo;
+    } else if (!senha) {
+      document.getElementById('senhaAtual').textContent = '—';
     }
-    renderHistorico(hist);
-    setConnection(true);
-  } catch (e) {
-    setConnection(false);
+
+    // Histórico
+    const ul = document.getElementById('historico');
+    if (historico.length === 0) {
+      ul.innerHTML = '<li style="background:none;border:none;color:var(--ink-soft)">Aguardando chamadas...</li>';
+    } else {
+      ul.innerHTML = [...historico].reverse()
+        .map(s => `<li>🎫 ${s.codigo} <small>(${s.tipo})</small></li>`)
+        .join('');
+    }
+
+    // Fila de espera por tipo
+    const elEspera = document.getElementById('filaEspera');
+    if (elEspera) {
+      elEspera.textContent = `Aguardando — VIP: ${espera.VIP ?? 0} | Preferencial: ${espera.PREFERENCIAL ?? 0} | Normal: ${espera.NORMAL ?? 0}`;
+    }
+  } catch {
+    // Sem alert para não poluir o display em produção
+    console.warn('Falha ao buscar dados da API');
   }
 }
 
+// Polling a cada 2 segundos
 carregarInstancia();
 atualizar();
 setInterval(atualizar, 2000);
-setInterval(carregarInstancia, 30000);

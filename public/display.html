@@ -3,51 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chamada — Painel de Senhas</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='7' fill='%230E1719'/%3E%3Crect x='9' y='15' width='7' height='18' rx='1.5' fill='%23E86A17'/%3E%3Crect x='20.5' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.6'/%3E%3Crect x='32' y='15' width='7' height='18' rx='1.5' fill='%23E86A17' opacity='.35'/%3E%3C/svg%3E">
+  <title>Display — Painel de Senhas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AB%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="page-display">
+<body>
 
-<div id="offlineBanner" class="wall-offline" hidden>Sem conexão com o servidor — última chamada pode estar desatualizada</div>
-
-<header class="topbar">
-  <a class="brand" href="/">
-    <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="brand-name">Painel de Senhas</span>
-  </a>
-  <div class="status" data-status="on">
-    <span class="lamp" aria-hidden="true"></span>
-    <span class="status-label"></span>
-    <span data-clock>--:--:--</span>
+<nav>
+  <a class="nav-brand" href="/">🎫 Painel de Senhas</a>
+  <div class="nav-links">
+    <a href="/atendente">Atendente</a>
+    <a href="/display" class="active">Display</a>
+    <a href="/fluxo">Fluxo</a>
+    <a href="/login">Login</a>
   </div>
-</header>
+</nav>
 
-<main class="wall">
-  <div class="wall-main">
-    <p class="eyebrow">Senha</p>
-    <div class="bezel">
-      <div class="readout is-empty" id="senhaAtual" role="img" aria-label="Senha chamada"></div>
+<main>
+  <div class="card">
+    <h2>📺 Chamada de Senhas</h2>
+    <p class="subtitulo">
+      Este painel consulta a API a cada 2 segundos. Abra várias abas desta página:
+      todas vão mostrar exatamente o mesmo número, porque todas leem do mesmo objeto no servidor.
+    </p>
+
+    <span class="badge-online">Atualizando em tempo real</span>
+
+    <div class="led-bezel">
+      <div class="senha-numero display" id="senhaAtual">—</div>
     </div>
-    <p class="wall-caption">Dirija-se ao atendimento</p>
+    <p class="senha-label">Senha sendo atendida agora</p>
+
+    <p class="fila-espera" id="filaEspera">Aguardando — VIP: 0 | Preferencial: 0 | Normal: 0</p>
+
+    <div class="instance-badge" id="instanceBadge">
+      🔒 Instância do servidor: <strong id="instanceId">…</strong>
+      <span class="instance-hint">Compare com a mesma tela do Atendente — o ID é idêntico</span>
+    </div>
   </div>
 
-  <aside class="wall-side">
-    <div class="section-head"><span>Últimas chamadas</span></div>
-    <ul class="ledger" id="historico">
-      <li class="ledger-empty">Aguardando chamadas…</li>
+  <div class="card">
+    <h2>📋 Últimas Senhas Chamadas</h2>
+    <ul class="historico-lista" id="historico">
+      <li style="background:none;border:none;box-shadow:none;color:var(--ink-soft)">Aguardando chamadas...</li>
     </ul>
-  </aside>
+  </div>
 </main>
 
-<footer class="foot">
-  nó do servidor <b id="instanceId">…</b> · atualização a cada 2 s
-</footer>
-
-<script src="/js/shell.js"></script>
 <script src="/js/display.js"></script>
 </body>
 </html>
