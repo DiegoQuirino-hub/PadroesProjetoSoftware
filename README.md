@@ -1,5 +1,13 @@
 # PainelSenhas
 
+Integrantes:
+Audinalberth Mendes Carvalho
+Davi Cunha Rodrigues
+Diego Tarso Quirino de Lima
+Miguel Alves Pardini
+Pedro Luis Ribeiro
+Ray Gabriel Moreira Araujo
+
 Sistema de painel de senhas (fila de atendimento), reescrito de **C# / ASP.NET** para **Java / Spring Boot**, usado como exercício de Padrões de Projeto de Software — com destaque para o padrão **Singleton** aplicado à fila de senhas (`QueueService`) e o padrão **Factory Method** aplicado à emissão de senhas de tipos diferentes (`TicketFactory`).
 
 O front-end (HTML/CSS/JS + servidor Node/Express) vive na branch [`frontend`](../../tree/frontend) e consome a API deste back-end.
